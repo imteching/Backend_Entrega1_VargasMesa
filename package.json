@@ -1,0 +1,22 @@
+{
+  "name": "backend_entrega1_vargasmesa",
+  "version": "1.0.0",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/app.sj",
+    "dev": "nodemon src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imteching/Backend_Entrega1_VargasMesa.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/imteching/Backend_Entrega1_VargasMesa/issues"
+  },
+  "homepage": "https://github.com/imteching/Backend_Entrega1_VargasMesa#readme",
+  "description": ""
+}
