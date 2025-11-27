@@ -4,7 +4,7 @@
   "main": "src/app.js",
   "type": "module",
   "scripts": {
-    "start": "node src/app.sj",
+    "start": "node src/app.js",
     "dev": "nodemon src/app.js"
   },
   "repository": {
@@ -18,5 +18,8 @@
     "url": "https://github.com/imteching/Backend_Entrega1_VargasMesa/issues"
   },
   "homepage": "https://github.com/imteching/Backend_Entrega1_VargasMesa#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }

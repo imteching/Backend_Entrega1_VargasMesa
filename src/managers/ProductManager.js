@@ -6,9 +6,14 @@ export default class ProductManager {
   }
 
   async getProducts() {
-    if (!existsSync(this.path)) return [];
-    const data = await fs.promises.readFile(this.path, "utf-8");
-    return JSON.parse(data);
+    try {
+      if (!fs.existsSync(this.path)) return [];
+      const data = await fs.promises.readFile(this.path, "utf-8");
+      return JSON.parse(data);
+    } catch (error) {
+      console.error("Error leyendo productos:", error);
+      return [];
+    }
   }
 
   async addProduct(product) {
@@ -36,7 +41,7 @@ export default class ProductManager {
 
     products[index] = { ...products[index], ...updatedData };
 
-    await fs.promises.writeFile(this.path, JSONstringify(products, null, 2));
+    await fs.promises.writeFile(this.path, JSON.stringify(products, null, 2));
     return products[index];
   }
 
@@ -48,5 +53,9 @@ export default class ProductManager {
       this.path,
       JSON.stringify(newProducts, null, 2)
     );
+  }
+  async getProductById(id) {
+    const products = await this.getProducts();
+    return products.find((p) => p.id === id) || null;
   }
 }

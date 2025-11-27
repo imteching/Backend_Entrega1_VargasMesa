@@ -6,15 +6,20 @@ export default class CartManager {
   }
 
   async getCarts() {
-    if (!fs.existsSync(this.path)) return [];
-    const data = await fs.promises.readFile(this.path, "utf-8");
-    return JSON.parse(data);
+    try {
+      if (!fs.existsSync(this.path)) return [];
+      const data = await fs.promises.readFile(this.path, "utf-8");
+      return JSON.parse(data);
+    } catch (error) {
+      console.error("Error leyendo carritos:", error);
+      return [];
+    }
   }
 
   async createCart() {
-    const carts = await this.getCargs();
+    const carts = await this.getCarts();
 
-    const newId = carts.length === 0 ? 1 : cats[cargs.length - 1].id + 1;
+    const newId = carts.length === 0 ? 1 : carts[carts.length - 1].id + 1;
 
     const newCart = {
       id: newId,
@@ -27,6 +32,11 @@ export default class CartManager {
     return newCart;
   }
 
+  async getCartById(id) {
+    const carts = await this.getCarts();
+    return carts.find((c) => c.id === id) || null;
+  }
+
   async addProductToCart(cid, pid) {
     const carts = await this.getCarts();
     const cartIndex = carts.findIndex((c) => c.id === cid);
@@ -37,10 +47,10 @@ export default class CartManager {
       (p) => p.product === pid
     );
 
-    if (producIndex !== -1) {
+    if (productIndex !== -1) {
       carts[cartIndex].products[productIndex].quantity++;
     } else {
-      carts[cartIntex].products.push({ product: pid, quantity: 1 });
+      carts[cartIndex].products.push({ product: pid, quantity: 1 });
     }
 
     await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 2));
