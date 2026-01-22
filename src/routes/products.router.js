@@ -1,17 +1,28 @@
 import { Router } from "express";
-import ProductManager from "../managers/ProductManager.js";
+import ProductService from "../services/product.service.js";
 
 const router = Router();
-const productManager = new ProductManager("src/data/products.json");
+const ProductService = new ProductService();
 
 router.get("/", async (req, res) => {
-  const products = await productManager.getProducts();
-  res.json(products);
+  try {
+    const { limit, page, sort, query } = req.query;
+
+    const result = await productService.getProducts({
+      limit: Number(limit) || 10,
+      page: Number(page) || 1,
+      sort,
+      query
+    });
+
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ status: "error", error: error.message });
+  }
 });
 
 router.get("/:pid", async (req, res) => {
-  const pid = parseInt(req.params.pid);
-  const product = await productManager.getProductById(pid);
+  const product = await productService.getProductById(req.params.pid);
 
   if (!product)
     return res.status(404).json({ error: "Producto no encontrado" });
@@ -20,24 +31,12 @@ router.get("/:pid", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const product = req.body;
-  const newProduct = await productManager.addProduct(product);
+  const newProduct = await productService.createProduct(req.body);
   res.status(201).json(newProduct);
 });
 
-router.put("/:pid", async (req, res) => {
-  const pid = parseInt(req.params.pid);
-  const updated = await productManager.updateProduct(pid, req.body);
-
-  if (!updated)
-    return res.status(404).json({ error: "Producto no encontrado" });
-
-  res.json(updated);
-});
-
 router.delete("/:pid", async (req, res) => {
-  const pid = parseInt(req.params.pid);
-  await productManager.deleteProduct(pid);
+  await productService.deleteProduct(req.params.pid);
   res.json({ message: "Producto eliminado" });
 });
 
