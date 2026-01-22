@@ -1,17 +1,47 @@
 import { Router } from "express";
-import ProductManager from "../managers/ProductManager.js";
+import { ProductModel } from "../models/product.model.js";
 
 const router = Router();
-const productManager = new ProductManager("src/data/products.json");
 
-router.get("/", async (req, res) => {
-    const products = await productManager.getProducts();
-    res.render("home", { products });
-});
+router.get("/products", async (requestAnimationFrame, res) => {
+    const {
+        page = 1,
+        limit = 10,
+        sort,
+        query
+    } = req.query;
 
-router.get("/realtimeproducts", async (req, res) => {
-    const products = await productManager.getProducts();
-    res.render("realTimeProducts", { products });
+    const filter = {};
+
+    if (query) {
+        if (query === "true" || query === "false") {
+            filter.status = query === "true";
+        } else {
+            filter.category = query;
+        }
+    }
+
+    const options = {
+        page,
+        limit,
+        lean: true
+    };
+
+    if (sort) {
+        options.sort = { price: sort === "asc" ? 1 : -1 };
+    }
+
+    const result = await ProductModel.paginate(filter, options);
+
+    res.render("index", {
+        products: result.docs,
+        page: result.page,
+        totalPages: result.totalPages,
+        hasPrevPage: result.hasPrevPage,
+        hasNextPage: result.hasNextPage,
+        prevPage: result.prevPage,
+        nextPage: result.nextPage
+    });
 });
 
 export default router;
