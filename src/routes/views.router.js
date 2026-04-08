@@ -3,7 +3,7 @@ import { ProductModel } from "../models/product.model.js";
 
 const router = Router();
 
-router.get("/products", async (requestAnimationFrame, res) => {
+router.get("/products", async (req, res) => {
     const {
         page = 1,
         limit = 10,
@@ -22,8 +22,8 @@ router.get("/products", async (requestAnimationFrame, res) => {
     }
 
     const options = {
-        page,
-        limit,
+        page: parseInt(page),
+        limit: parseInt(limit),
         lean: true
     };
 
@@ -35,6 +35,7 @@ router.get("/products", async (requestAnimationFrame, res) => {
 
     res.render("index", {
         products: result.docs,
+        cartId: "ID_REAL_DEL_CARRITO",
         page: result.page,
         totalPages: result.totalPages,
         hasPrevPage: result.hasPrevPage,

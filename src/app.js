@@ -8,22 +8,28 @@ import { initializePassport } from "./config/passport.config.js";
 import cookieParser from "cookie-parser";
 import sessionsRouter from "./routes/sessions.router.js"
 
-dotenv.configDotenv();
+dotenv.config();
 
 const app = express();
 
-app.arguments(express.json());
-app.arguments(express.urlencoded({ extended: true }));
+// Middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+// Passport
+initializePassport();
+app.use(passport.initialize());
+
+// Rutas
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
-app.use(cookieParser());
-app.use(passport.initialize());
 app.use("/api/sessions", sessionsRouter);
 
+// DB
 connectMongoDB();
 
-initializePassport();
-
+// Server
 app.listen(8080, () => {
   console.log("Servidor escuchando en el puerto 8080");
 });
