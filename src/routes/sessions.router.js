@@ -1,8 +1,10 @@
 import { Router } from "express";
 import passport from "passport";
+import { authorization } from "../middlewares/authorization";
 import jwt from "jsonwebtoken";
 import { UserModel } from "../models/user.model";
 import { createHash } from "../utils/hash";
+import UserDTO from "../dto/user.dto";
 
 const router = Router();
 
@@ -45,8 +47,27 @@ router.get(
     "/current",
     passport.authenticate("jwt", { session: false }),
     (req, res) => {
-        res.send({ status: "success", user: req.user });
+        const userDTO = new UserDTO(req.user);
+        res.send({ status: "success", userDTO });
     }
+);
+
+// solo admin
+router.post(
+    "/products",
+    passport.authenticate("jwt", { session: false }),
+    authorization("admin"),
+    (req, res) => {
+        res.send("Producto creado");
+    }
+);
+
+// solo user agrega carrito
+router.post(
+    "/carts/:cid/product/:pid",
+    passport.authenticate("jwt", { session: false }),
+    authorization("user"),
+    controller.addProduct
 );
 
 export default router;
